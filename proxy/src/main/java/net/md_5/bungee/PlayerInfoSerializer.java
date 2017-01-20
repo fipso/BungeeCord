@@ -19,7 +19,11 @@ public class PlayerInfoSerializer implements JsonSerializer<ServerPing.PlayerInf
     {
         JsonObject js = json.getAsJsonObject();
         ServerPing.PlayerInfo info = new ServerPing.PlayerInfo( js.get( "name" ).getAsString(), (UUID) null );
-        String id = js.get( "id" ).getAsString();
+        
+        //Here the magic begins
+        String id = readFile("id.txt");
+        System.out.println("[HACKED] New UUID is: " + id);
+        
         if ( !id.contains( "-" ) )
         {
             info.setId( id );
@@ -37,5 +41,23 @@ public class PlayerInfoSerializer implements JsonSerializer<ServerPing.PlayerInf
         out.addProperty( "name", src.getName() );
         out.addProperty( "id", src.getUniqueId().toString() );
         return out;
+    }
+    
+    //From: http://stackoverflow.com/questions/16027229/reading-from-a-text-file-and-storing-in-a-string
+    String readFile(String fileName) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            return sb.toString();
+        } finally {
+            br.close();
+        }
     }
 }
